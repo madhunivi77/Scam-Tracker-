@@ -1,0 +1,27 @@
+.App {
+  text-align: center;
+  font-family: sans-serif;
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 1rem;
+  color: white;
+}
+
+.App-main {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.divider {
+  border: none;
+  height: 1px;
+  background: #ccc;
+  margin: 2rem 0;
+}
