@@ -1,70 +1,180 @@
-# Getting Started with Create React App
+# Scam Tracker
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A simple web application for tracking and reporting scams.  
+This repository contains a **Flask** backend (with session‑based auth) and a **React** frontend.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Table of Contents
 
-### `npm start`
+1. [Prerequisites](#prerequisites)  
+2. [Backend Setup](#backend-setup)  
+   1. [Clone & Virtual Environment](#clone--virtual-environment)  
+   2. [Install Dependencies](#install-dependencies)  
+   3. [Configure Environment Variables](#configure-environment-variables)  
+   4. [Initialize Database & Run](#initialize-database--run)  
+3. [Frontend Setup](#frontend-setup)  
+   1. [Clone & Install Dependencies](#clone--install-dependencies)  
+   2. [Run in Development](#run-in-development)  
+4. [API Endpoints](#api-endpoints)  
+5. [CORS & Cookies](#cors--cookies)  
+6. [Project Structure](#project-structure)  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Prerequisites
 
-### `npm test`
+- Python 3.7+  
+- Node.js & npm (Node 16+ recommended)  
+- PostgreSQL (running locally or remotely)  
+- A modern web browser (Chrome, Firefox, Safari, etc.)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## Backend Setup
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Clone & Virtual Environment
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+# In your source directory:
+git clone <your-backend-repo-url> scam-tracker-backend
+cd scam-tracker-backend
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# (Optional but recommended)
+python3 -m venv venv
+source venv/bin/activate      # macOS/Linux
+venv\Scripts\activate.bat   # Windows
+```
 
-### `npm run eject`
+### Install Dependencies
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+pip install \
+  flask \
+  flask-cors \
+  flask-sqlalchemy \
+  flask-bcrypt \
+  python-dotenv \
+  psycopg2-binary
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Configure Environment Variables
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Create a file named `.env` in the backend root:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```ini
+# .env
+DB_USER=your_pg_username
+DB_PASSWORD=your_pg_password
+DB_HOST=localhost
+DB_PORT=5432
+DB_DATABASE=your_database_name
 
-## Learn More
+# Used to sign Flask’s session cookie. Replace with a strong random string!
+SECRET_KEY=some-secure-random-value
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Optional: turn on debug mode
+FLASK_ENV=development
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Initialize Database & Run
 
-### Code Splitting
+No manual migrations needed—the app auto-creates tables & sequences.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+export FLASK_APP=app.py
+export FLASK_ENV=development    # optional
+flask run                       # launches on http://127.0.0.1:5000
+```
 
-### Analyzing the Bundle Size
+You should see:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
+ * Serving Flask app "app.py"
+ * Environment: development
+ * Debug mode: on
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+```
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Frontend Setup
 
-### Advanced Configuration
+### Clone & Install Dependencies
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+# In a separate terminal:
+git clone <your-frontend-repo-url> scam-tracker-frontend
+cd scam-tracker-frontend
+npm install
+```
 
-### Deployment
+### Run in Development
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```bash
+npm start
+```
 
-### `npm run build` fails to minify
+This will open http://localhost:3000 in your browser.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## API Endpoints
+
+| Method | Path                    | Description                         |
+| ------ | ----------------------- | ----------------------------------- |
+| POST   | `/api/auth/register`    | Create a new user                   |
+| POST   | `/api/auth/login`       | Log in (sets session cookie)        |
+| GET    | `/api/auth/me`          | Return current user (reads session) |
+
+---
+
+## CORS & Cookies
+
+- Configured in **app.py** with:
+  ```python
+  CORS(
+    app,
+    resources={ r"/api/*": {"origins": ["http://localhost:3000"]} },
+    supports_credentials=True
+  )
+  ```
+- All frontend fetches that need cookies must include:
+  ```js
+  fetch(url, {
+    credentials: 'include',
+    ...
+  })
+  ```
+
+---
+
+## Project Structure
+
+```
+scam-tracker-backend/
+├── app.py
+├── .env
+├── requirements.txt
+└── ...
+
+scam-tracker-frontend/
+├── package.json
+├── src/
+│   ├── App.js
+│   ├── components/
+│   │   ├── LoginForm.js
+│   │   ├── RegisterForm.js
+│   │   └── Dashboard.js
+│   └── ...
+└── ...
+```
+
+---
+
+You’re all set!  
+1. **Register** at http://localhost:3000/register  
+2. **Log in** at http://localhost:3000/  
+3. **View Dashboard** at http://localhost:3000/dashboard  
+
+Enjoy building and testing your Scam Tracker app!
