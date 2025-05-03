@@ -13,12 +13,11 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'change-me-in-production')
 
-CORS(
-    app,
-    origins=["http://localhost:3000"],
-    supports_credentials=True,
-    methods=["GET","POST","PUT","DELETE","OPTIONS"],
-    allow_headers=["Content-Type", "Authorization"]
+CORS(app,
+     resources={r"/api/*": {"origins": "http://localhost:3000"}},
+     supports_credentials=True,
+     allow_headers=["Content-Type", "Authorization"],
+     methods=["GET","POST","PUT","DELETE","OPTIONS"]
 )
 
 app.config['DEBUG'] = os.getenv('FLASK_ENV') == 'development'
