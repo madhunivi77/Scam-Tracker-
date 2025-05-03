@@ -195,7 +195,14 @@ export default function Dashboard() {
 
   const renderReportForm = () => (
     <form onSubmit={handleReportSubmit}>
-      <h2>Report a Scam</h2>
+      <h2
+      style={{
+        color:      '#00ffe0',
+        textShadow: '0 0 8px #00ffe0',
+      }}
+    >
+      Report A Scam
+    </h2>
       <select
         required
         value={form.tid}
@@ -248,7 +255,14 @@ export default function Dashboard() {
 
   const renderAuthoritiesView = () => (
     <div>
-      <h2>Contact Scam Authorities</h2>
+      <h2
+      style={{
+        color:      '#00ffe0',
+        textShadow: '0 0 8px #00ffe0',
+      }}
+    >
+      Contact Scam Authorities
+    </h2>
       <input
         placeholder="Country"
         value={authCountry}
@@ -269,7 +283,14 @@ export default function Dashboard() {
 
   const renderTipsView = () => (
     <div>
-      <h2>Prevention Tips</h2>
+      <h2
+      style={{
+        color:      '#00ffe0',
+        textShadow: '0 0 8px #00ffe0',
+      }}
+    >
+      Prevention Tips
+    </h2>
       <button onClick={handleFetchTips}>Load Tips</button>
       <button onClick={() => setView('home')}>Back</button>
       {message && <p>{message}</p>}
@@ -283,7 +304,14 @@ export default function Dashboard() {
 
   const renderByCountryView = () => (
     <div>
-      <h2>Reports by Country</h2>
+     <h2
+      style={{
+        color:      '#00ffe0',
+        textShadow: '0 0 8px #00ffe0',
+      }}
+    >
+      Reports By Country
+    </h2>
       <button onClick={handleFetchByCountry}>Load Table</button>
       <button onClick={() => setView('home')}>Back</button>
       {message && <p className="error">{message}</p>}
@@ -305,8 +333,15 @@ export default function Dashboard() {
 
   const renderMyReportsView = () => (
     <div className="my-reports">
-      <h2>My Submitted Reports</h2>
-      <button onClick={() => { setView('home'); setMessage(''); }}>
+      <h2
+      style={{
+        color:      '#00ffe0',
+        textShadow: '0 0 8px #00ffe0',
+      }}
+    >
+      My Submitted Reports
+    </h2>
+    <button onClick={() => { setView('home'); setMessage(''); }}>
         Back
       </button>
       {message && <p className="error">{message}</p>}
