@@ -5,6 +5,10 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   
   .form-title {
