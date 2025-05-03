@@ -11,7 +11,7 @@ Styling: CSS
 
 1. Authentication: Users can create account and log in with the created account credentials.
 2. Scam Reporting: The users will be able to submit scams by filling out a form containing Scam Type as a dropdown, Date, Country, Financial Loss and Description.
-3. Conanting Scam Authorities: They willbe able to view the conancts of the authorities as soon as the enter thr Country and hit search.
+3. Contacting Scam Authorities: They will be able to view the conancts of the authorities as soon as the enter thr Country and hit search.
 4. Prevnetion Tips: When they hit the load tips button the will be able to view the tips accordingly.
 5. UI: The UI is conventiionally built as it has simple UI and easy to understand feedbacks.
 
