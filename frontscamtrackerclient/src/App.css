@@ -1,27 +1,79 @@
+
+input, select, textarea {
+  background-color: #f5f5f5;
+  color: #111;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #888;
+}
+
+button {
+  background-color: #66f0e3;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  margin: 10px 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+button:hover {
+  background-color: #44ccc3;
+}
+
+.form-section {
+  background-color: #1f2937;
+  color: #66f0e3;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: inline-block;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+.form-container button {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: 0.5rem 0;
+}
+
 .App {
   text-align: center;
   font-family: sans-serif;
 }
-
 .App-header {
   background-color: #282c34;
   padding: 1rem;
   color: white;
 }
-
 .App-main {
   max-width: 400px;
   margin: 2rem auto;
   padding: 0 1rem;
 }
-
-.form-section {
-  margin-bottom: 2rem;
-}
-
 .divider {
   border: none;
   height: 1px;
   background: #ccc;
   margin: 2rem 0;
 }
+

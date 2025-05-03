@@ -1,5 +1,10 @@
 // src/components/Dashboard.js
 import React, { useEffect, useState } from 'react';
+import './ReportsByCountry.css';
+import './MyReports.css';
+// Intro.js imports
+import introJs from 'intro.js';
+import 'intro.js/introjs.css';
 
 const API_BASE = 'http://127.0.0.1:5000';
 
@@ -12,9 +17,18 @@ export default function Dashboard() {
     report_loss: '', report_description: ''
   });
   const [message, setMessage]         = useState('');
+  const [isSuccess, setIsSuccess]     = useState(false);
   const [authCountry, setAuthCountry] = useState('');
   const [authorities, setAuthorities] = useState([]);
   const [tips, setTips]               = useState([]);
+  const [countryCounts, setCountryCounts] = useState([]);
+  const [myReports, setMyReports]         = useState([]);
+  const [editingReport, setEditingReport] = useState(null);
+  const [editForm, setEditForm]           = useState({
+    rid: '', tid: '', report_date: '',
+    report_country: '', report_loss: '',
+    report_description: ''
+  });
 
   // ─── Fetch scam‐types ─────────────────────────────
   useEffect(() => {
@@ -35,6 +49,7 @@ export default function Dashboard() {
   const handleReportSubmit = async e => {
     e.preventDefault();
     setMessage('');
+    setIsSuccess(false);
     const payload = { uid, ...form };
     const res = await fetch(`${API_BASE}/api/scam/report`, {
       method: 'POST',
@@ -42,7 +57,14 @@ export default function Dashboard() {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    setMessage(res.ok ? 'Report submitted!' : data.message || 'Error');
+    if (res.ok) {
+              setIsSuccess(true);
+              setMessage('Report submitted successfully!');
+              setForm({ tid:'', report_date:'', report_country:'', report_loss:'', report_description:'' });
+            } else {
+              setIsSuccess(false);
+              setMessage(data.message || 'Submission failed');
+            }
   };
 
   const handleFetchAuthorities = async () => {
@@ -63,17 +85,110 @@ export default function Dashboard() {
     else setTips(data);
   };
 
+  const handleFetchByCountry = async () => {
+    setMessage('');
+    const res  = await fetch(`${API_BASE}/api/scam/reports-by-country`);
+    const data = await res.json();
+    if (!res.ok) setMessage(data.message || 'Error');
+    else setCountryCounts(data);
+  };
+
+  const handleFetchMyReports = async () => {
+    setMessage('');
+    const res  = await fetch(`${API_BASE}/api/scam/reports?uid=${uid}`);
+    const data = await res.json();
+    if (!res.ok) setMessage(data.message || 'Error');
+    else setMyReports(data);
+  };
+
+  const handleDeleteReport = async rid => {
+    if (!window.confirm('Delete this report?')) return;
+    const res = await fetch(`${API_BASE}/api/scam/report/${rid}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      setMessage('Report deleted');
+      handleFetchMyReports();
+    } else {
+      setMessage(data.message || 'Error');
+    }
+  };
+
+  const startEdit = report => {
+    setEditingReport(report.rid);
+    setEditForm({ ...report });
+  };
+
+  const handleEditSubmit = async e => {
+    e.preventDefault();
+    const res = await fetch(`${API_BASE}/api/scam/report/${editingReport}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid, ...editForm })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      setMessage('Report updated');
+      setEditingReport(null);
+      handleFetchMyReports();
+    } else {
+      setMessage(data.message || 'Error');
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingReport(null);
+    setMessage('');
+  };
+
+  // ─── Tutorial handler ────────────────────────────
+  const startTutorial = () => {
+    introJs().setOptions({
+      steps: [
+        { element: '#btn-report',      intro: 'Report a scam here.' },
+        { element: '#btn-authorities', intro: 'Find scam authorities.' },
+        { element: '#btn-tips',        intro: 'View prevention tips.' },
+        { element: '#btn-byCountry',   intro: 'See reports by country.' },
+        { element: '#btn-myReports',   intro: 'Manage your own reports.' },
+      ]
+    }).start();
+  };
+
   // ─── Render helpers ───────────────────────────────
   const renderHome = () => (
-    <div>
-      <button onClick={() => { setView('report');      setMessage(''); }}>
+    <div className="form-container">
+      <button
+        id="btn-report"
+        onClick={() => { setView('report');      setMessage(''); }}
+      >
         Report a Scam
       </button>
-      <button onClick={() => { setView('authorities'); setMessage(''); }}>
+      <button
+        id="btn-authorities"
+        onClick={() => { setView('authorities'); setMessage(''); }}
+      >
         Contact Scam Authorities
       </button>
-      <button onClick={() => { setView('tips');        setMessage(''); }}>
+      <button
+        id="btn-tips"
+        onClick={() => { setView('tips');        setMessage(''); }}
+      >
         View Prevention Tips
+      </button>
+      <button
+        id="btn-byCountry"
+        onClick={() => { setView('byCountry');  setMessage(''); }}
+      >
+        Reports by Country
+      </button>
+      <button
+        id="btn-myReports"
+        onClick={() => { setView('myReports');  setMessage(''); handleFetchMyReports(); }}
+      >
+        My Reports
       </button>
     </div>
   );
@@ -94,22 +209,28 @@ export default function Dashboard() {
         ))}
       </select>
       <input
-        type="date" required
+        type="date"
+        required
         value={form.report_date}
         onChange={e => setForm({ ...form, report_date: e.target.value })}
       />
       <input
-        type="text" placeholder="Country" required
+        type="text"
+        placeholder="Country"
+        required
         value={form.report_country}
         onChange={e => setForm({ ...form, report_country: e.target.value })}
       />
       <input
-        type="number" placeholder="Financial Loss" required
+        type="number"
+        placeholder="Financial Loss"
+        required
         value={form.report_loss}
         onChange={e => setForm({ ...form, report_loss: e.target.value })}
       />
       <textarea
-        placeholder="Description" required
+        placeholder="Description"
+        required
         value={form.report_description}
         onChange={e => setForm({ ...form, report_description: e.target.value })}
       />
@@ -117,7 +238,11 @@ export default function Dashboard() {
       <button type="button" onClick={() => setView('home')}>
         Back
       </button>
-      {message && <p>{message}</p>}
+      {message && (
+        <p style={{ color: isSuccess ? 'green' : 'red', marginTop: '1rem' }}>
+          {message}
+        </p>
+      )}
     </form>
   );
 
@@ -156,14 +281,128 @@ export default function Dashboard() {
     </div>
   );
 
+  const renderByCountryView = () => (
+    <div>
+      <h2>Reports by Country</h2>
+      <button onClick={handleFetchByCountry}>Load Table</button>
+      <button onClick={() => setView('home')}>Back</button>
+      {message && <p className="error">{message}</p>}
+      <table className="reports-by-country">
+        <thead>
+          <tr><th>Country</th><th># Reports</th></tr>
+        </thead>
+        <tbody>
+          {countryCounts.map(r => (
+            <tr key={r.country}>
+              <td>{r.country}</td>
+              <td>{r.count}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
+  const renderMyReportsView = () => (
+    <div className="my-reports">
+      <h2>My Submitted Reports</h2>
+      <button onClick={() => { setView('home'); setMessage(''); }}>
+        Back
+      </button>
+      {message && <p className="error">{message}</p>}
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Date</th>
+            <th>Country</th>
+            <th>Loss</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {myReports.map(r => (
+            <tr key={r.rid}>
+              {editingReport === r.rid ? (
+                <td colSpan="6">
+                  <form onSubmit={handleEditSubmit} className="edit-form">
+                    <select
+                      value={editForm.tid}
+                      onChange={e => setEditForm({ ...editForm, tid: e.target.value })}
+                      required
+                    >
+                      {types.map(t => (
+                        <option key={t.tid} value={t.tid}>
+                          {t.type_description}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="date"
+                      value={editForm.report_date}
+                      onChange={e => setEditForm({ ...editForm, report_date: e.target.value })}
+                      required
+                    />
+                    <input
+                      type="text"
+                      value={editForm.report_country}
+                      onChange={e => setEditForm({ ...editForm, report_country: e.target.value })}
+                      required
+                    />
+                    <input
+                      type="number"
+                      value={editForm.report_loss}
+                      onChange={e => setEditForm({ ...editForm, report_loss: e.target.value })}
+                      required
+                    />
+                    <textarea
+                      value={editForm.report_description}
+                      onChange={e => setEditForm({ ...editForm, report_description: e.target.value })}
+                      required
+                    />
+                    <button type="submit">Save</button>
+                    <button type="button" onClick={cancelEdit}>Cancel</button>
+                  </form>
+                </td>
+              ) : (
+                <>
+                  <td>{r.tid}</td>
+                  <td>{r.report_date}</td>
+                  <td>{r.report_country}</td>
+                  <td>{r.report_loss}</td>
+                  <td>{r.report_description}</td>
+                  <td>
+                    <button onClick={() => startEdit(r)}>Edit</button>
+                    <button onClick={() => handleDeleteReport(r.rid)}>Delete</button>
+                  </td>
+                </>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
   // ─── Main render ────────────────────────────────
   return (
-    <div style={{ padding: '2rem' }}>
+    <div style={{ padding: '2rem', position: 'relative' }}>
+      {/* Tutorial button in top‐right */}
+      <button
+        onClick={startTutorial}
+        style={{ position: 'absolute', top: '1rem', right: '-10.5rem' }}
+      >
+        Tutorial
+      </button>
+
       <h1>Welcome, {userName}!</h1>
       {view === 'home'        && renderHome()}
       {view === 'report'      && renderReportForm()}
       {view === 'authorities' && renderAuthoritiesView()}
       {view === 'tips'        && renderTipsView()}
+      {view === 'byCountry'   && renderByCountryView()}
+      {view === 'myReports'   && renderMyReportsView()}
     </div>
   );
 }

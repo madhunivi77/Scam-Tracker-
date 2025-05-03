@@ -14,37 +14,38 @@
   }
   
   .form-label {
-    display: block;
-    margin-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
     font-size: 0.9rem;
     color: #333;
   }
   
   .form-input {
-    display: block;
     width: 100%;
     padding: 0.5rem;
-    margin-top: 0.25rem;
     border: 1px solid #ccc;
     border-radius: 3px;
     font-size: 1rem;
   }
   
-  .form-button {
-    display: block;
+  .form-button,
+  .go-login-button {
     width: 100%;
-    padding: 0.6rem;
-    margin-top: 1rem;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #4caf50;
+    color: white;
+    font-weight: bold;
     border: none;
-    border-radius: 3px;
-    background: #28a745;
-    color: #fff;
-    font-size: 1rem;
+    border-radius: 4px;
     cursor: pointer;
+    text-align: center;
   }
   
-  .form-button:hover {
-    background: #1e7e34;
+  .form-button:hover,
+  .go-login-button:hover {
+    background-color: #45a049;
   }
   
   .form-error {
@@ -60,4 +61,3 @@
     font-size: 0.9rem;
     text-align: center;
   }
-  

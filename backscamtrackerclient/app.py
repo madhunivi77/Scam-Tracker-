@@ -6,6 +6,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from sqlalchemy import text
+from datetime import datetime
 
 # ─── App & DB setup ─────────────────────────────────
 load_dotenv()
@@ -207,7 +208,85 @@ def get_tips():
         for t in tips
     ]), 200
 
+@app.route('/api/scam/reports-by-country', methods=['GET'])
+def reports_by_country():
+    
+    rows = db.session.execute(text("""
+       SELECT report_country AS country,
+              COUNT(*)         AS count
+         FROM scam_reports
+        GROUP BY report_country
+        ORDER BY count DESC
+    """)).fetchall()
 
+    return jsonify([
+      {"country": r.country, "count": r.count}
+      for r in rows
+    ]), 200
+@app.route('/api/scam/reports', methods=['GET'])
+def get_user_reports():
+    uid = request.args.get('uid')
+    if not uid:
+        return jsonify(message='uid required'), 400
+    try:
+        uid = int(uid)
+    except ValueError:
+        return jsonify(message='invalid uid'), 400
+
+    reports = ScamReport.query.filter_by(uid=uid).all()
+    return jsonify([
+        {
+            'rid': r.rid,
+            'tid': r.tid,
+            'report_date': r.report_date.isoformat(),
+            'report_country': r.report_country,
+            'report_loss': r.report_loss,
+            'report_description': r.report_description
+        }
+        for r in reports
+    ]), 200
+@app.route('/api/scam/report/<int:rid>', methods=['PUT'])
+def update_scam_report(rid):
+    data = request.get_json() or {}
+    try:
+        uid = int(data.get('uid'))
+    except (TypeError, ValueError):
+        return jsonify(message='Valid uid required'), 400
+
+    rpt = ScamReport.query.filter_by(rid=rid, uid=uid).first()
+    if not rpt:
+        return jsonify(message='Report not found'), 404
+
+    # Update fields if provided
+    if 'tid' in data:
+        rpt.tid = int(data['tid'])
+    if 'report_date' in data:
+        rpt.report_date = datetime.fromisoformat(data['report_date']).date()
+    if 'report_country' in data:
+        rpt.report_country = data['report_country']
+    if 'report_loss' in data:
+        rpt.report_loss = float(data['report_loss'])
+    if 'report_description' in data:
+        rpt.report_description = data['report_description']
+
+    db.session.commit()
+    return jsonify(message='Report updated'), 200
+
+@app.route('/api/scam/report/<int:rid>', methods=['DELETE'])
+def delete_scam_report(rid):
+    data = request.get_json() or {}
+    try:
+        uid = int(data.get('uid'))
+    except (TypeError, ValueError):
+        return jsonify(message='Valid uid required'), 400
+
+    rpt = ScamReport.query.filter_by(rid=rid, uid=uid).first()
+    if not rpt:
+        return jsonify(message='Report not found'), 404
+
+    db.session.delete(rpt)
+    db.session.commit()
+    return jsonify(message='Report deleted'), 200
 # ─── Run ────────────────────────────────────────────
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
