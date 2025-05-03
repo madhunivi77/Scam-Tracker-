@@ -49,9 +49,9 @@ export default function Dashboard() {
     ? localStorage.getItem("user_name")
     : "<username>";
   const uid = localStorage.getItem("uid");
-  // if (!userName || !uid) {
-  //   return <p style={{ color: 'red' }}>Not logged in</p>;
-  // }
+  if (!userName || !uid) {
+    return <p style={{ color: "red" }}>Not logged in</p>;
+  }
 
   // ─── Handlers ────────────────────────────────────
   const handleReportSubmit = async (e) => {
