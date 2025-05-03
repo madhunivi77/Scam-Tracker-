@@ -1,5 +1,5 @@
 # **Scam Tracker**
-It is a web based application where users can log in, create account, report or view a scam. If they would like they can also view the prevention tips and scam authorities to contact.
+It is a web-based application where users can log in, create account, report or view a scam and their statistics. If they would like they can also view the prevention tips and scam authorities to contact.
 
 **Tech Stack:**
 
@@ -10,18 +10,18 @@ Styling: CSS
 **Features:**
 
 1. Authentication: Users can create account and log in with the created account credentials.
-2. Scam Reporting: The users will be able to submit scams by filling out a form containing Scam Type as a dropdown, Date, Country, Financial Loss and Description.
-3. Contacting Scam Authorities: They will be able to view the conancts of the authorities as soon as the enter thr Country and hit search.
-4. Prevnetion Tips: When they hit the load tips button the will be able to view the tips accordingly.
-5. UI: The UI is conventiionally built as it has simple UI and easy to understand feedbacks.
+2. Scam Reporting: The users will be able to submit scams by filling out a form containing Scam Type as a dropdown, date, country, financial loss and description.
+3. Contacting Scam Authorities: They will be able to view the contacts of the authorities as soon as the enter the country name in the search bar and hit search.
+4. Prevention Tips: When they hit the load tips button, they will be able to view the tips accordingly.
+5. UI: There is a simple UI and easy to understand feedbacks.
 
 **Installation & Set up:**
 
 1. Clone the Repository:
 
-   git clone https://github.com/yourusername/Scam-Tracker-.git
+   git clone https://github.com/madhunivi77/Scam-Tracker-.git
 
-cd Scam-Tracker-
+   cd Scam-Tracker-
 
 2. Install:
 
@@ -70,6 +70,10 @@ cd Scam-Tracker-
 
 **User Testing:**
 
-After the installlation and set up users can create their account with any dummy values if haven't already and log in to the Scam Tracker.
+After the installation and set up, users can create their account with any dummy values if haven't already and log in to Scam Tracker.
 
 Then they can report the scam, search for authorities or prevention tips to check the usability.
+
+Test credentials - 
+   user email: bob@gmail.com
+   password:   bobisthebest
