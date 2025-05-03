@@ -1,31 +1,30 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './LoginForm.css';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./LoginForm.css";
 
-const API_BASE = 'http://127.0.0.1:5000';
+const API_BASE = "http://127.0.0.1:5000";
 
 export default function LoginForm() {
-  const [user_email, setUserEmail]       = useState('');
-  const [user_password, setUserPassword] = useState('');
-  const [error, setError]                = useState('');
+  const [user_email, setUserEmail] = useState("");
+  const [user_password, setUserPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     try {
       const res = await fetch(`${API_BASE}/api/auth/login`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_email, user_password })
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_email, user_password }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Login failed');
-      localStorage.setItem('uid', data.uid);
-  localStorage.setItem('user_name', data.user_name);
-      navigate('/dashboard');
-      
+      if (!res.ok) throw new Error(data.message || "Login failed");
+      localStorage.setItem("uid", data.uid);
+      localStorage.setItem("user_name", data.user_name);
+      navigate("/dashboard");
     } catch (err) {
       setError(err.message);
     }
@@ -42,7 +41,7 @@ export default function LoginForm() {
           type="email"
           className="form-input"
           value={user_email}
-          onChange={e => setUserEmail(e.target.value)}
+          onChange={(e) => setUserEmail(e.target.value)}
           required
         />
       </label>
@@ -53,7 +52,7 @@ export default function LoginForm() {
           type="password"
           className="form-input"
           value={user_password}
-          onChange={e => setUserPassword(e.target.value)}
+          onChange={(e) => setUserPassword(e.target.value)}
           required
         />
       </label>
@@ -62,8 +61,8 @@ export default function LoginForm() {
         Log In
       </button>
       <p className="form-footer">
-       Don’t have an account? <Link to="/register">Register here</Link>
+        Don’t have an account? <Link to="/register">Register here</Link>
       </p>
-     </form>
-   );
+    </form>
+  );
 }
