@@ -5,6 +5,10 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   
   .form-title {
@@ -16,8 +20,12 @@
   .form-label {
     display: block;
     margin-bottom: 0.75rem;
+    width: 100%;
     font-size: 0.9rem;
     color: #333;
+    justify-content: center;
+    align-items: center;
+    
   }
   
   .form-input {
@@ -28,6 +36,8 @@
     border: 1px solid #ccc;
     border-radius: 3px;
     font-size: 1rem;
+    justify-content: center;
+    align-items: center;
   }
   
   .form-button {
